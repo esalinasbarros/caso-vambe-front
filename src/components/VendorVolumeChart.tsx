@@ -158,7 +158,7 @@ const VendorVolumeChart: React.FC<VendorVolumeChartProps> = ({ data, vendors }) 
                                 iconType="circle"
                             />
                             <Bar dataKey="conversionRate" name="Tasa de Conversión" radius={[0, 4, 4, 0]}>
-                                {chartData.map((entry, index) => (
+                                {chartData.map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Bar>

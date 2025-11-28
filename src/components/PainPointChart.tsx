@@ -99,7 +99,7 @@ const PainPointChart: React.FC<PainPointChartProps> = ({ data }) => {
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                {chartData.map((item, index) => (
+                {chartData.map((item) => (
                     <div
                         key={item.painPoint}
                         className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded border border-white/10"

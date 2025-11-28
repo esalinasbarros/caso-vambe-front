@@ -24,7 +24,9 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onClientClick }) => {
         const vends = new Set<string>();
         
         categorizedClients.forEach(c => {
-            inds.add(getCategory(c, 'industry'));
+            const industry = getCategory(c, 'industry');
+            const industryValue = Array.isArray(industry) ? industry.join(', ') : industry;
+            inds.add(industryValue);
             vends.add(c.vendedor);
         });
 

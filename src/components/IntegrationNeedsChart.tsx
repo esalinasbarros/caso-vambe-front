@@ -5,7 +5,6 @@ import {
     Cell,
     ResponsiveContainer,
     Tooltip,
-    Legend,
 } from 'recharts';
 import { Plug, Code, Database, Cloud } from 'lucide-react';
 
@@ -19,17 +18,16 @@ interface IntegrationNeedsChartProps {
 const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) => {
     
     const COLORS = [
-        '#60a5fa', // blue-400
-        '#a78bfa', // violet-400
-        '#34d399', // emerald-400
-        '#f472b6', // pink-400
-        '#fb923c', // orange-400
-        '#fbbf24', // amber-400
-        '#22d3ee', // cyan-400
-        '#f87171', // red-400
+        '#60a5fa', 
+        '#a78bfa', 
+        '#34d399', 
+        '#f472b6', 
+        '#fb923c', 
+        '#fbbf24', 
+        '#22d3ee', 
+        '#f87171', 
     ];
 
-    // Filtrar y preparar datos (excluir N/A si hay otros datos)
     const chartData = useMemo(() => {
         const filtered = data.filter(item => item.integrationNeed && item.integrationNeed !== 'N/A');
         const naData = data.find(item => item.integrationNeed === 'N/A' || !item.integrationNeed);
@@ -45,7 +43,6 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
         return chartData.reduce((sum, item) => sum + item.count, 0);
     }, [chartData]);
 
-    // Función para obtener el icono según el tipo de integración
     const getIcon = (need: string) => {
         const lower = need.toLowerCase();
         if (lower.includes('api') || lower.includes('sdk')) return <Code className="w-4 h-4" />;
@@ -76,7 +73,7 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-        if (percent < 0.05) return null; // No mostrar etiquetas muy pequeñas
+        if (percent < 0.05) return null; 
 
         return (
             <text
@@ -116,7 +113,6 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Gráfico de Dona */}
                 <div className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -140,12 +136,11 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
                     </ResponsiveContainer>
                 </div>
 
-                {/* Lista de necesidades */}
                 <div className="flex flex-col justify-center">
                     <div className="space-y-2">
                         {chartData
                             .sort((a, b) => b.count - a.count)
-                            .map((item, index) => {
+                            .map((item) => {
                                 const percentage = total > 0 ? ((item.count / total) * 100).toFixed(1) : 0;
                                 return (
                                     <div
@@ -176,7 +171,6 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
                                                 <p className="text-xs text-white/50">clientes</p>
                                             </div>
                                         </div>
-                                        {/* Barra de progreso */}
                                         <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all"
