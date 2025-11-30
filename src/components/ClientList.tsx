@@ -31,8 +31,8 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onClientClick }) => {
         });
 
         return {
-            industries: Array.from(inds).sort(),
-            vendors: Array.from(vends).sort()
+            industries: [...inds].sort(),
+            vendors: [...vends].sort()
         };
     }, [categorizedClients]);
 

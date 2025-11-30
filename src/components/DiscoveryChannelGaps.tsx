@@ -66,7 +66,7 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
                     </div>
                     {channelsWithoutCloses.length > 0 ? (
                         <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
-                            {channelsWithoutCloses
+                            {[...channelsWithoutCloses]
                                 .sort((a, b) => b.count - a.count)
                                 .map((item) => (
                                     <div

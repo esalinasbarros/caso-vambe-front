@@ -68,8 +68,8 @@ const VendorIndustryChart: React.FC<VendorIndustryChartProps> = ({ data, vendors
 
         // Ordenar según el criterio seleccionado
         const sorted = sortBy === 'conversion' 
-            ? result.sort((a, b) => b.conversionRate - a.conversionRate)
-            : result.sort((a, b) => b.count - a.count);
+            ? [...result].sort((a, b) => b.conversionRate - a.conversionRate)
+            : [...result].sort((a, b) => b.count - a.count);
 
         return sorted.slice(0, 8); // Limitar a las top 8 industrias para mejor visualización
     }, [data, selectedVendor, search, minCount, sortBy]);

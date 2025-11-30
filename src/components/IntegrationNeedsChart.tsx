@@ -138,7 +138,7 @@ const IntegrationNeedsChart: React.FC<IntegrationNeedsChartProps> = ({ data }) =
 
                 <div className="flex flex-col justify-center">
                     <div className="space-y-2">
-                        {chartData
+                        {[...chartData]
                             .sort((a, b) => b.count - a.count)
                             .map((item) => {
                                 const percentage = total > 0 ? ((item.count / total) * 100).toFixed(1) : 0;
