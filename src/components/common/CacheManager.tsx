@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Database, RefreshCw, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { getCacheStatus, clearCache } from '../services/api';
+import { getCacheStatus, clearCache } from '../../services/api';
 
 interface CacheStatus {
     total: number;

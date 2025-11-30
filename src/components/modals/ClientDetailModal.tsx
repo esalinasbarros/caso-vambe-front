@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { CategorizedClient } from '../types';
+import { CategorizedClient } from '../../types';
 
 interface ClientDetailModalProps {
   client: CategorizedClient;

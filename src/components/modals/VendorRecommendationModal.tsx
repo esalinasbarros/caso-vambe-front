@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Loader2, UserCheck } from 'lucide-react';
-import { getVendorRecommendation } from '../services/api';
+import { getVendorRecommendation } from '../../services/api';
 
 interface VendorRecommendationModalProps {
   onClose: () => void;
