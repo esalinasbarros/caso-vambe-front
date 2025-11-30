@@ -24,12 +24,12 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
         'Prueba de Producto',
     ];
 
-    // Canales sin deals cerrados (tienen clientes pero no cerraron)
+    // Canales sin clientes cerrados
     const channelsWithoutCloses = useMemo(() => {
         return data.filter(item => item.count > 0 && item.closedCount === 0);
     }, [data]);
 
-    // Canales sin deals en absoluto (no tienen clientes)
+    // Canales sin ningun cliente
     const channelsWithoutDeals = useMemo(() => {
         const existingChannels = new Set(data.map(item => item.channel));
         return allChannels.filter(channel => !existingChannels.has(channel));
@@ -92,7 +92,7 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
                     )}
                 </div>
 
-                {/* Canales sin uso */}
+                
                 <div className="bg-gradient-to-br from-orange-500/15 to-orange-600/10 border border-orange-500/30 rounded-lg p-3 backdrop-blur-sm">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
@@ -129,7 +129,6 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
                 </div>
             </div>
 
-            {/* Resumen compacto */}
             {(channelsWithoutCloses.length > 0 || channelsWithoutDeals.length > 0) && (
                 <div className="mt-3 pt-3 border-t border-white/10">
                     <div className="flex items-center justify-center gap-6">

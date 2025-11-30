@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { CategorizedClient } from '../types';
+import { CategorizedClient } from '../../types';
 
 interface ClientListProps {
     clients: CategorizedClient[];
