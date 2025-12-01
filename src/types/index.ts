@@ -107,5 +107,7 @@ export interface Metrics {
         month: string;
         totalClients: number;
         closedDeals: number;
+        notClosedDeals: number;
+        conversionRate: number;
     }[];
 }

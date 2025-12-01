@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { TrendingUp, Users, CheckCircle, Loader2, UserCheck } from 'lucide-react';
 import StatCard from './components/common/StatCard';
 import ClientList from './components/common/ClientList';
@@ -16,6 +16,8 @@ import VendorVolumeChart from './components/vendorMetrics/VendorVolumeChart';
 import VolumeChart from './components/normalMetrics/VolumeChart';
 import SolutionPartChart from './components/normalMetrics/SolutionPartChart';
 import UsefulAddonsChart from './components/normalMetrics/UsefulAddonsChart';
+import MonthlyDealsChart from './components/normalMetrics/MonthlyDealsChart';
+import MonthlyConversionChart from './components/normalMetrics/MonthlyConversionChart';
 import CacheManager from './components/common/CacheManager';
 import VendorRecommendationModal from './components/modals/VendorRecommendationModal';
 import { getBasicMetrics, getAdvancedMetrics } from './services/api';
@@ -29,28 +31,63 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [selectedClient, setSelectedClient] = useState<CategorizedClient | null>(null);
   const [showVendorRecommendation, setShowVendorRecommendation] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+
+  // Función helper para generar opciones de meses
+  const generateMonthOptions = () => {
+    const months: string[] = [];
+    
+    // Generar todos los meses del 2024
+    for (let i = 1; i <= 12; i++) {
+      const month = String(i).padStart(2, '0');
+      months.push(`2024-${month}`);
+    }
+    
+    return months;
+  };
+
+  const monthOptions = generateMonthOptions();
+
+  // Función helper para formatear mes para mostrar
+  const formatMonthLabel = (month: string) => {
+    const [year, monthNum] = month.split('-');
+    const date = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+    const formatted = date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    // Capitalizar primera letra
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  };
+
+  const fetchBasicMetrics = useCallback(async () => {
+    try {
+      setLoading(true);
+      const basicMetricsData = await getBasicMetrics(selectedMonth);
+      setMetrics(basicMetricsData as Metrics);
+      setError(null);
+    } catch (err) {
+      setError('Error al cargar los datos. Asegurate de que el backend este corriendo.');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedMonth]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const basicMetricsData = await getBasicMetrics();
-        setMetrics(basicMetricsData as Metrics);
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar los datos. Asegurate de que el backend este corriendo.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchBasicMetrics();
+    // Resetear métricas avanzadas cuando cambie el mes para evitar inconsistencias
+    setCategorizedClients([]);
+    setMetrics((prev) => {
+      if (!prev) return null;
+      // Mantener solo las métricas básicas (overview y byVendor)
+      return {
+        overview: prev.overview,
+        byVendor: prev.byVendor,
+      } as Metrics;
+    });
+  }, [selectedMonth, fetchBasicMetrics]);
 
   const handleLoadAdvancedMetrics = async (forceRefresh: boolean = false) => {
     try {
       setLoadingAdvanced(true);
-      const { metrics: advancedMetricsData, categorizedClients: clientsData } = await getAdvancedMetrics(forceRefresh);
+      const { metrics: advancedMetricsData, categorizedClients: clientsData } = await getAdvancedMetrics(forceRefresh, selectedMonth);
       setMetrics((prev) => ({
         ...prev,
         ...advancedMetricsData,
@@ -95,22 +132,44 @@ function App() {
     <div className="min-h-screen p-4">
       <div className=" mx-auto">
         {/* Header */}
-        <div className="mb-6 animate-fade-in flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-1">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-fuchsia-400">Vambe Analytics</span>
-            </h1>
-            <p className="text-white/60 text-sm">
-              Panel de categorización automática y métricas de clientes
-            </p>
+        <div className="mb-6 animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-1">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-fuchsia-400">Vambe Analytics</span>
+              </h1>
+              <p className="text-white/60 text-sm">
+                Panel de categorización automática y métricas de clientes
+              </p>
+            </div>
+            <button
+              onClick={() => setShowVendorRecommendation(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold py-2.5 px-5 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
+              <UserCheck className="w-4 h-4" />
+              Recomendar Vendedor
+            </button>
           </div>
-          <button
-            onClick={() => setShowVendorRecommendation(true)}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold py-2.5 px-5 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
-          >
-            <UserCheck className="w-4 h-4" />
-            Recomendar Vendedor
-          </button>
+          
+          {/* Selector de Mes */}
+          <div className="flex items-center gap-3">
+            <label htmlFor="month-select" className="text-white/70 text-sm font-medium">
+              Filtrar por mes:
+            </label>
+            <select
+              id="month-select"
+              value={selectedMonth || ''}
+              onChange={(e) => setSelectedMonth(e.target.value || null)}
+              className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-sky-400 transition-colors"
+            >
+              <option value="" className="text-black">Todos los meses</option>
+              {monthOptions.map((month) => (
+                <option key={month} value={month} className="text-black">
+                  {formatMonthLabel(month)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 animate-slide-up">
@@ -133,6 +192,25 @@ function App() {
             gradient="from-purple-600 to-purple-400"
           />
         </div>
+
+        {/* Gráficos de Métricas por Mes */}
+        {metrics && metrics.timeSeriesData && metrics.timeSeriesData.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 animate-slide-up" style={{ animationDelay: '0.05s' }}>
+            <MonthlyDealsChart 
+              data={metrics.timeSeriesData.map(item => ({
+                month: item.month,
+                closedDeals: item.closedDeals,
+                notClosedDeals: item.notClosedDeals || (item.totalClients - item.closedDeals),
+              }))} 
+            />
+            <MonthlyConversionChart 
+              data={metrics.timeSeriesData.map(item => ({
+                month: item.month,
+                conversionRate: item.conversionRate,
+              }))} 
+            />
+          </div>
+        )}
 
         {metrics && metrics.byVendor.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">

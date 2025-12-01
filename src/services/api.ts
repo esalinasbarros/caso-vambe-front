@@ -30,19 +30,26 @@ export const getClientById = async (id: number): Promise<Client> => {
     return response.data.data;
 };
 
-export const getMetrics = async (): Promise<Metrics> => {
-    const response = await api.get('/api/metrics');
+export const getMetrics = async (month?: string | null): Promise<Metrics> => {
+    const response = await api.get('/api/metrics', {
+        params: month ? { month } : {}
+    });
     return response.data.data;
 };
 
-export const getBasicMetrics = async (): Promise<Partial<Metrics>> => {
-    const response = await api.get('/api/metrics/basic');
+export const getBasicMetrics = async (month?: string | null): Promise<Partial<Metrics>> => {
+    const response = await api.get('/api/metrics/basic', {
+        params: month ? { month } : {}
+    });
     return response.data.data;
 };
 
-export const getAdvancedMetrics = async (forceRefresh: boolean = false): Promise<{ metrics: Partial<Metrics>; categorizedClients: CategorizedClient[] }> => {
+export const getAdvancedMetrics = async (forceRefresh: boolean = false, month?: string | null): Promise<{ metrics: Partial<Metrics>; categorizedClients: CategorizedClient[] }> => {
     const response = await api.get('/api/metrics/advanced', {
-        params: { forceRefresh }
+        params: { 
+            forceRefresh,
+            ...(month ? { month } : {})
+        }
     });
     return response.data.data;
 };
