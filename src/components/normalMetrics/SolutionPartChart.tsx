@@ -22,24 +22,48 @@ interface SolutionPartChartProps {
 }
 
 const SolutionPartChart: React.FC<SolutionPartChartProps> = ({ data }) => {
-    const COLORS = {
+    const DEFAULT_COLORS = {
         'Vambe AI': '#60a5fa',
         'Vambe Ads': '#a78bfa',
         'Vambe Connect': '#34d399',
     };
 
-    const allSolutions = ['Vambe AI', 'Vambe Ads', 'Vambe Connect'];
+    // Colores adicionales para soluciones dinámicas
+    const EXTRA_COLORS = ['#f472b6', '#fb923c', '#fbbf24', '#22d3ee', '#f87171', '#a78bfa', '#34d399', '#60a5fa'];
     
-    const chartData = allSolutions.map((solution) => {
-        const existing = data.find(item => item.solutionPart === solution);
-        return {
-            solutionPart: solution,
-            count: existing?.count || 0,
-            closedCount: existing?.closedCount || 0,
-            conversionRate: existing?.conversionRate || 0,
-            color: COLORS[solution as keyof typeof COLORS] || '#94a3b8',
-        };
-    });
+    // Obtener todas las soluciones únicas de los datos y ordenarlas por count
+    const chartData = [...data]
+        .filter(item => item.count > 0) // Solo mostrar soluciones con clientes
+        .sort((a, b) => b.count - a.count)
+        .map((item, index) => {
+            const color = DEFAULT_COLORS[item.solutionPart as keyof typeof DEFAULT_COLORS] 
+                || EXTRA_COLORS[index % EXTRA_COLORS.length];
+            return {
+                ...item,
+                color,
+            };
+        });
+
+    if (chartData.length === 0) {
+        return (
+            <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-4 shadow-2xl flex flex-col">
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-blue-500/20 rounded-lg">
+                        <Package className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
+                            Distribución por Solución
+                        </h3>
+                        <p className="text-white/60 text-xs">Clientes por parte de solución</p>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center h-[300px] text-white/40">
+                    <p>No hay datos de soluciones disponibles</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-4 shadow-2xl flex flex-col">

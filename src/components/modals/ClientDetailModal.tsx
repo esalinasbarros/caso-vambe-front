@@ -46,7 +46,9 @@ const ClientDetailModal = ({ client, onClose }: ClientDetailModalProps) => {
           />
           <DetailCard
             label="Parte de solución"
-            value={client.categories.solutionPart || 'N/A'}
+            value={client.categories.solutionPart && client.categories.solutionPart.length > 0 
+              ? client.categories.solutionPart.join(', ') 
+              : 'Ninguna'}
           />
           <DetailCard
             label="Addons vendidos"

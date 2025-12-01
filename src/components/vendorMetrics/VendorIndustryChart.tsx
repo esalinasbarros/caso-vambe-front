@@ -34,14 +34,12 @@ const VendorIndustryChart: React.FC<VendorIndustryChartProps> = ({ data, vendors
     const [minCount, setMinCount] = useState(0);
     const [sortBy, setSortBy] = useState<'conversion' | 'total'>('conversion');
 
-    // Datos para el gráfico Radar (diagrama web)
     const radarData = useMemo(() => {
         if (selectedVendor === 'all') return [];
         
         const query = search.trim().toLowerCase();
         let vendorData = data.filter(item => item.vendedor === selectedVendor);
         
-        // Aplicar filtros
         vendorData = vendorData.filter((item) => item.count >= minCount);
         if (query) {
             vendorData = vendorData.filter((item) => item.industry.toLowerCase().includes(query));
@@ -66,12 +64,11 @@ const VendorIndustryChart: React.FC<VendorIndustryChartProps> = ({ data, vendors
                 fullMark: 100,
             }));
 
-        // Ordenar según el criterio seleccionado
         const sorted = sortBy === 'conversion' 
             ? [...result].sort((a, b) => b.conversionRate - a.conversionRate)
             : [...result].sort((a, b) => b.count - a.count);
 
-        return sorted.slice(0, 8); // Limitar a las top 8 industrias para mejor visualización
+        return sorted.slice(0, 8); 
     }, [data, selectedVendor, search, minCount, sortBy]);
 
     const avgConversion =
@@ -152,7 +149,6 @@ const VendorIndustryChart: React.FC<VendorIndustryChartProps> = ({ data, vendors
                 </select>
             </div>
 
-            {/* Diagrama Web (Radar Chart) */}
             {selectedVendor !== 'all' && radarData.length > 0 ? (
                 <div style={{ width: '100%', height: '450px' }}>
                     <ResponsiveContainer width="100%" height="100%">

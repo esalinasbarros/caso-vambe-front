@@ -129,7 +129,6 @@ const VendorPainPointChart: React.FC<VendorPainPointChartProps> = ({ data, vendo
                 />
             </div>
 
-            {/* Gráfico de Barras Horizontales */}
             {selectedVendor !== 'all' ? (
                 <div style={{ width: '100%', height: '450px' }}>
                     <ResponsiveContainer width="100%" height="100%">

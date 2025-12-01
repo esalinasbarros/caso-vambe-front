@@ -11,7 +11,7 @@ interface DiscoveryChannelGapsProps {
 }
 
 const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => {
-    // Todos los canales posibles según el schema
+    
     const allChannels = [
         'Búsqueda Orgánica',
         'Redes Sociales',
@@ -24,12 +24,10 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
         'Prueba de Producto',
     ];
 
-    // Canales sin clientes cerrados
     const channelsWithoutCloses = useMemo(() => {
         return data.filter(item => item.count > 0 && item.closedCount === 0);
     }, [data]);
 
-    // Canales sin ningun cliente
     const channelsWithoutDeals = useMemo(() => {
         const existingChannels = new Set(data.map(item => item.channel));
         return allChannels.filter(channel => !existingChannels.has(channel));
@@ -47,7 +45,6 @@ const DiscoveryChannelGaps: React.FC<DiscoveryChannelGapsProps> = ({ data }) => 
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {/* Canales con clientes pero sin cierres */}
                 <div className="bg-gradient-to-br from-red-500/15 to-red-600/10 border border-red-500/30 rounded-lg p-3 backdrop-blur-sm">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
